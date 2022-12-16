@@ -10,4 +10,8 @@ public interface TaskService {
      void markAsDone(Long id);
 
      void markAsNotDone(Long id);
+
+     List<Task> findAllDoneTask();
+
+     List<Task> findAllNotDoneTask();
 }

@@ -15,10 +15,25 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findAllTask() {
         return taskRepo.findAllTask();
     }
+    @Override
+    public List<Task> findAllDoneTask() {
+        return taskRepo.findAllDoneTask();
+    }
+
+    @Override
+    public List<Task> findAllNotDoneTask() {
+        return taskRepo.findAllNotDoneTask();
+    }
 
     @Override
     public Task save(Task task) {
-        return taskRepo.save(task);
+        new Task();
+        Task newTask = Task.builder()
+                .description(task.getDescription())
+                .deadline(task.getDeadline())
+                .isDone(false)
+                .build();
+        return taskRepo.save(newTask);
     }
 
     @Override
@@ -28,8 +43,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void update(Task task) {
+
         taskRepo.findById(task.getId()).ifPresent(t -> {
-            t.setDone(task.isDone());
             t.setDescription(task.getDescription());
             t.setDeadline(task.getDeadline());
             taskRepo.save(t);
@@ -51,4 +66,6 @@ public class TaskServiceImpl implements TaskService {
             taskRepo.save(t);
         });
     }
+
+
 }

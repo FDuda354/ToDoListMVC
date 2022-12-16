@@ -16,21 +16,28 @@ public class TaskController {
 
     @GetMapping
     public String getAllTasks(Model model) {
-        Iterable<Task> tasks = taskService.findAllTask();
+        List<Task> tasks = taskService.findAllTask();
         model.addAttribute("allTasks", tasks);
 
         return "allTasks";
     }
+    @GetMapping("done")
+    public String doneTaskPage(Model model) {
+        List<Task> tasks = taskService.findAllDoneTask();
+        model.addAttribute("allDoneTasks", tasks);
+        return "doneTask";
+    }
+    @GetMapping("notDone")
+    public String NotDoneTaskPage(Model model) {
+        List<Task> tasks = taskService.findAllNotDoneTask();
+        model.addAttribute("allNotDoneTasks", tasks);
+        return "notDoneTask";
+    }
 
     @PostMapping("newTask")
     public String addTask(@ModelAttribute Task task) {
-        new Task();
-        Task newTask = Task.builder()
-                .description(task.getDescription())
-                .deadline(task.getDeadline())
-                .isDone(false)
-                .build();
-        taskService.save(newTask);
+
+        taskService.save(task);
         return "redirect:/tasks";
     }
 
@@ -38,6 +45,7 @@ public class TaskController {
     public String newTaskPage() {
         return "addTask";
     }
+
 
     @GetMapping("delete/{id}")
     public String deleteTask(@PathVariable Long id) {
@@ -57,18 +65,11 @@ public class TaskController {
 
     @GetMapping("editPage/{id}")
     public String update(@PathVariable Long id) {
-
         return "editTask";
     }
     @GetMapping("edit")
     public String edit(@ModelAttribute Task task) {
-        Task oldTask = taskService.findAllTask().stream()
-                .filter(t -> t.getId().equals(task.getId()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Task not found"));
-        oldTask.setDescription(task.getDescription());
-        oldTask.setDeadline(task.getDeadline());
-        taskService.update(oldTask);
+        taskService.update(task);
         return "redirect:/tasks";
     }
 }
