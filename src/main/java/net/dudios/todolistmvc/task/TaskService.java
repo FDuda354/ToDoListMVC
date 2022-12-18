@@ -3,14 +3,14 @@ package net.dudios.todolistmvc.task;
 import java.util.List;
 
 public interface TaskService {
-     List<Task> findAllTask();
-     Task save(Task task);
-     void delete(Long id);
-     void markAsDone(Long id);
+     List<Task> findAllTask(Long userId);
+     Task save(Long userId,Task task);
+     void delete(Long taskId);
+     void markAsDone(Long taskId);
 
-     void markAsNotDone(Long id);
+     void markAsNotDone(Long taskId);
 
-     List<Task> findAllDoneTask();
+     List<Task> findAllDoneTask(Long userId);
 
-     List<Task> findAllNotDoneTask();
+     List<Task> findAllNotDoneTask(Long userId);
 }

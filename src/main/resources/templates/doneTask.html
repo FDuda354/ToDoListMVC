@@ -26,8 +26,7 @@
     <td th:if="${task.isDone == false}"><a th:href="@{/tasks/done/{id}(id=${task.id})}" class="btn btn-danger" >NOT DONE</a></td>
     <td th:if="${task.isDone == true}"><a th:href="@{/tasks/notDone/{id}(id=${task.id})}" class="btn btn-success" >DONE</a></td>
     <td th:text="${task.deadline}"></td>
-    <td><a th:href="@{/tasks/delete/{id}/{scope}(id=${task.id},scope=2)}" class="btn btn-danger" >DELETE</a></td>
-
+    <td><a th:href="@{/tasks/delete/{taskId}(taskId=${task.id})}" class="btn btn-danger" >DELETE</a></td>
   </tr>
   </tbody>
 </table>

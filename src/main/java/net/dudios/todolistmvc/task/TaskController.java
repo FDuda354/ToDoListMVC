@@ -1,6 +1,9 @@
 package net.dudios.todolistmvc.task;
 
-import lombok.AllArgsConstructor;
+import net.dudios.todolistmvc.user.AppUser;
+import net.dudios.todolistmvc.user.UserRepo;
+import net.dudios.todolistmvc.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -8,35 +11,59 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@AllArgsConstructor
 @RequestMapping("/tasks")
 public class TaskController {
 
+    //TODO: zastanowic sie czemu jest potrzeba na redirect a nie zwykłe wyrzucenie stringa
     private final TaskService taskService;
+    private final UserService userService;
+    private final UserRepo userRepo;
+    private Long userId;
+
+    private String lastPage;
+
+    @Autowired
+    public TaskController(TaskService taskService, UserService userService, UserRepo userRepo) {
+        this.taskService = taskService;
+        this.userService = userService;
+        this.userRepo = userRepo;
+    }
 
     @GetMapping
-    public String getAllTasks(Model model) {
-        List<Task> tasks = taskService.findAllTask();
+    public String getAllTasks( Model model) {
+        List<Task> tasks = taskService.findAllTask(this.userId);
         model.addAttribute("allTasks", tasks);
+        lastPage = "";
         return "allTasks";
+    }
+    @PostMapping("/login")
+    public String login(@ModelAttribute AppUser user) {
+        AppUser appUser = userRepo.findByUsername(user.getUsername());
+        userId = appUser.getId();
+        //TODO: remove this
+        System.out.println(userId);
+
+        return "redirect:/tasks";
     }
     @GetMapping("done")
     public String doneTaskPage(Model model) {
-        List<Task> tasks = taskService.findAllDoneTask();
+        List<Task> tasks = userRepo.findById(userId).get().getTasks().stream().filter(Task::isDone).toList();
         model.addAttribute("allDoneTasks", tasks);
+        lastPage = "done";
         return "doneTask";
     }
     @GetMapping("notDone")
     public String NotDoneTaskPage(Model model) {
-        List<Task> tasks = taskService.findAllNotDoneTask();
+        List<Task> tasks = userRepo.findById(userId).get().getTasks().stream().filter(task -> !task.isDone()).toList();
         model.addAttribute("allNotDoneTasks", tasks);
+        lastPage = "notDone";
         return "notDoneTask";
     }
 
     @PostMapping("newTask")
     public String addTask(@ModelAttribute Task task) {
+        taskService.save(this.userId,task);
 
-        taskService.save(task);
         return "redirect:/tasks";
     }
 
@@ -45,27 +72,22 @@ public class TaskController {
         return "addTask";
     }
 
-
-    @GetMapping("delete/{id}/{scope}")
-    public String deleteTask(@PathVariable Long id, @PathVariable int scope) {
+    @GetMapping("delete/{id}")
+    public String deleteTask(@PathVariable Long id) {
         taskService.delete(id);
-        if (scope == 2) {
-            return "redirect:/tasks/done";
-        } else if (scope == 3) {
-           return "redirect:/tasks/notDone";
-        } else {
-            return "redirect:/tasks";
-        }
+        return "redirect:/tasks/" + lastPage;
+    }
+    @GetMapping("done/{taskId}")
+    public String markAsDone(@PathVariable Long taskId) {
+        taskService.markAsDone(taskId);
+        System.out.println(lastPage);
+        return "redirect:/tasks/" + lastPage;
 
     }
-    @GetMapping("done/{id}")
-    public String markAsDone(@PathVariable Long id) {
-        taskService.markAsDone(id);
-        return "redirect:/tasks";
-    }
-    @GetMapping("notDone/{id}")
-    public String markAsNotDone(@PathVariable Long id) {
-        taskService.markAsNotDone(id);
-        return "redirect:/tasks";
+    @GetMapping("notDone/{taskId}")
+    public String markAsNotDoneLong(@PathVariable Long taskId) {
+        taskService.markAsNotDone( taskId);
+        return "redirect:/tasks/" + lastPage;
+
     }
 }
