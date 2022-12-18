@@ -41,15 +41,6 @@ public class TaskServiceImpl implements TaskService {
         taskRepo.findById(id).ifPresent(taskRepo::delete);
     }
 
-    @Override
-    public void update(Task task) {
-
-        taskRepo.findById(task.getId()).ifPresent(t -> {
-            t.setDescription(task.getDescription());
-            t.setDeadline(task.getDeadline());
-            taskRepo.save(t);
-        });
-    }
 
     @Override
     public void markAsDone(Long id) {

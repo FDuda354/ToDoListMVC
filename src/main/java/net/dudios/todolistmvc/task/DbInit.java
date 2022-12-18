@@ -13,7 +13,7 @@ public class DbInit {
 
     private final TaskRepo taskRepo;
 
-    //@EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public void init() {
         taskRepo.save(new Task(1L, "Task 1", false, LocalDate.of(2020, 3, 15)));
         taskRepo.save(new Task(2L, "Task 2", true, LocalDate.of(2023, 11, 13)));

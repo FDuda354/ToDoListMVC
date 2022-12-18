@@ -6,7 +6,6 @@ public interface TaskService {
      List<Task> findAllTask();
      Task save(Task task);
      void delete(Long id);
-     void update(Task task);
      void markAsDone(Long id);
 
      void markAsNotDone(Long id);

@@ -18,7 +18,6 @@ public class TaskController {
     public String getAllTasks(Model model) {
         List<Task> tasks = taskService.findAllTask();
         model.addAttribute("allTasks", tasks);
-
         return "allTasks";
     }
     @GetMapping("done")
@@ -47,10 +46,17 @@ public class TaskController {
     }
 
 
-    @GetMapping("delete/{id}")
-    public String deleteTask(@PathVariable Long id) {
+    @GetMapping("delete/{id}/{scope}")
+    public String deleteTask(@PathVariable Long id, @PathVariable int scope) {
         taskService.delete(id);
-        return "redirect:/tasks";
+        if (scope == 2) {
+            return "redirect:/tasks/done";
+        } else if (scope == 3) {
+           return "redirect:/tasks/notDone";
+        } else {
+            return "redirect:/tasks";
+        }
+
     }
     @GetMapping("done/{id}")
     public String markAsDone(@PathVariable Long id) {
@@ -60,16 +66,6 @@ public class TaskController {
     @GetMapping("notDone/{id}")
     public String markAsNotDone(@PathVariable Long id) {
         taskService.markAsNotDone(id);
-        return "redirect:/tasks";
-    }
-
-    @GetMapping("editPage/{id}")
-    public String update(@PathVariable Long id) {
-        return "editTask";
-    }
-    @GetMapping("edit")
-    public String edit(@ModelAttribute Task task) {
-        taskService.update(task);
         return "redirect:/tasks";
     }
 }
