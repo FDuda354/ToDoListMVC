@@ -37,7 +37,11 @@ public class UserController {
                 .password(user.getPassword())
                 .tasks(new ArrayList<>())
                 .build();
-      userService.saveUser(appUser);
+       try{
+           userService.saveUser(appUser);
+       } catch (IllegalStateException e) {
+           return "redirect:/register";
+       }
         return "redirect:/";
     }
 }

@@ -11,11 +11,10 @@ public class UserServiceImpl implements UserService {
     private UserRepo userRepo;
 
     @Override
-    public void saveUser(AppUser appUser) {
+    public void saveUser(AppUser appUser) throws IllegalStateException{
         if (!userRepo.existsByUsername(appUser.getUsername()))
             userRepo.save(appUser);
         else
-            //TODO: handle exception
             throw new IllegalStateException("User with id " + appUser.getId() + " already exists");
     }
 

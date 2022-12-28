@@ -5,6 +5,7 @@ import net.dudios.todolistmvc.user.AppUser;
 import net.dudios.todolistmvc.user.UserRepo;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,8 +34,8 @@ public class TaskServiceImpl implements TaskService {
         AppUser user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         new Task();
         Task newTask = Task.builder()
-                .description(task.getDescription())
-                .deadline(task.getDeadline())
+                .description(task.getDescription().equals("") ? "-" : task.getDescription())
+                .deadline(task.getDeadline() == null ? LocalDate.now() : task.getDeadline())
                 .isDone(false)
                 .appUser(user)
                 .build();
@@ -48,7 +49,6 @@ public class TaskServiceImpl implements TaskService {
     public void delete(Long taskId) {
         taskRepo.findById(taskId).ifPresent(taskRepo::delete);
     }
-
 
     @Override
     public void markAsDone(Long taskId) {
