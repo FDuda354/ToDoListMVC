@@ -9,11 +9,12 @@ import java.util.List;
 @Repository
 public interface TaskRepo extends JpaRepository<Task, Long> {
 
+    @Query("select t from Task t where t.isDone = true and t.appUser.id = ?1 order by t.deadline")
+    List<Task> findAllDoneTask(Long userId);
 
-    @Query("select t from Task t where t.isDone = true order by t.id")
-    List<Task> findAllDoneTask();
+    @Query("select t from Task t where t.isDone = false and t.appUser.id = ?1 order by t.deadline")
+    List<Task> findAllNotDoneTask(Long userId);
 
-    @Query("select t from Task t where t.isDone = false order by t.id")
-    List<Task> findAllNotDoneTask();
-
+    @Query("select t from Task t where t.appUser.id = ?1 order by t.deadline")
+    List<Task> findAllTask(Long userId);
 }

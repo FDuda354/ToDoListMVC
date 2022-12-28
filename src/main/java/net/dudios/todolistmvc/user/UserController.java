@@ -19,6 +19,7 @@ public class UserController {
         return "login";
     }
 
+
     @GetMapping("/logout")
     public String logout() {
         return "redirect:/";
@@ -26,7 +27,6 @@ public class UserController {
 
     @GetMapping("/register")
     public String register() {
-
         return "register";
     }
     @PostMapping("/save")

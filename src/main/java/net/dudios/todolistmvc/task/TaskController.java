@@ -1,7 +1,7 @@
 package net.dudios.todolistmvc.task;
 
 import net.dudios.todolistmvc.user.AppUser;
-import net.dudios.todolistmvc.user.UserRepo;
+import net.dudios.todolistmvc.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,39 +14,46 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
-    private final UserRepo userRepo;
+
+    private final UserService userService;
     private Long userId;
     private String lastPage;
 
     @Autowired
-    public TaskController(TaskService taskService,  UserRepo userRepo) {
+    public TaskController(TaskService taskService, UserService userService) {
         this.taskService = taskService;
-        this.userRepo = userRepo;
+        this.userService = userService;
     }
 
     @GetMapping
     public String getAllTasks(Model model) {
-        List<Task> tasks = taskService.findAllTask(this.userId);
+        List<Task> tasks = taskService.findAllTask(this.userId).stream().sorted().toList();
         model.addAttribute("allTasks", tasks);
         lastPage = "";
         return "allTasks";
     }
+
     @PostMapping("/login")
     public String login(@ModelAttribute AppUser user) {
-        AppUser appUser = userRepo.findByUsername(user.getUsername());
-        userId = appUser.getId();
+        AppUser appUser = userService.login(user);
+        if (appUser == null)
+            return "redirect:/";
+        this.userId = appUser.getId();
         return "redirect:/tasks";
+
     }
+
     @GetMapping("done")
     public String doneTaskPage(Model model) {
-        List<Task> tasks = userRepo.findById(userId).get().getTasks().stream().filter(Task::isDone).toList();
+        List<Task> tasks = taskService.findAllDoneTask(this.userId);
         model.addAttribute("allDoneTasks", tasks);
         lastPage = "done";
         return "doneTask";
     }
+
     @GetMapping("notDone")
     public String NotDoneTaskPage(Model model) {
-        List<Task> tasks = userRepo.findById(userId).get().getTasks().stream().filter(task -> !task.isDone()).toList();
+        List<Task> tasks = taskService.findAllNotDoneTask(this.userId);
         model.addAttribute("allNotDoneTasks", tasks);
         lastPage = "notDone";
         return "notDoneTask";
@@ -54,7 +61,7 @@ public class TaskController {
 
     @PostMapping("newTask")
     public String addTask(@ModelAttribute Task task) {
-        taskService.save(this.userId,task);
+        taskService.save(this.userId, task);
         return "redirect:/tasks";
     }
 
@@ -68,15 +75,17 @@ public class TaskController {
         taskService.delete(id);
         return "redirect:/tasks/" + lastPage;
     }
+
     @GetMapping("done/{taskId}")
     public String markAsDone(@PathVariable Long taskId) {
         taskService.markAsDone(taskId);
         return "redirect:/tasks/" + lastPage;
 
     }
+
     @GetMapping("notDone/{taskId}")
     public String markAsNotDoneLong(@PathVariable Long taskId) {
-        taskService.markAsNotDone( taskId);
+        taskService.markAsNotDone(taskId);
         return "redirect:/tasks/" + lastPage;
 
     }

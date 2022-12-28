@@ -19,8 +19,7 @@ public class AppUser {
     private Long id;
     private String username;
     private String password;
-    @OneToMany
-    @JoinColumn(name = "user_id")
+    @OneToMany(mappedBy = "appUser")
     private List<Task> tasks;
 
 

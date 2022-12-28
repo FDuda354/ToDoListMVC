@@ -14,7 +14,6 @@
 <table class="table">
   <thead>
   <tr>
-    <th scope="col">Id</th>
     <th scope="col">Description</th>
     <th scope="col">is Done</th>
     <th scope="col">Dead Line</th>
@@ -22,7 +21,6 @@
   </thead>
   <tbody th:each="task:${allDoneTasks}">
   <tr>
-    <th th:text="${task.id}"></th>
     <td th:text="${task.description}"></td>
     <td th:if="${task.isDone == false}"><a th:href="@{/tasks/done/{id}(id=${task.id})}" class="btn btn-danger" >NOT DONE</a></td>
     <td th:if="${task.isDone == true}"><a th:href="@{/tasks/notDone/{id}(id=${task.id})}" class="btn btn-success" >DONE</a></td>

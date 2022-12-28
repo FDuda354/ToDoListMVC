@@ -12,34 +12,32 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepo taskRepo;
-    private UserRepo userRepo;
+    private final UserRepo userRepo;
 
     @Override
     public List<Task> findAllTask(Long userId) {
-        AppUser user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getTasks();
+        return  taskRepo.findAllTask(userId);
     }
     @Override
     public List<Task> findAllDoneTask(Long userId) {
-        AppUser user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getTasks().stream().filter(Task::isDone).toList();
+        return  taskRepo.findAllDoneTask(userId);
     }
 
     @Override
     public List<Task> findAllNotDoneTask(Long userId) {
-        AppUser user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getTasks().stream().filter(task -> !task.isDone()).toList();
+        return  taskRepo.findAllNotDoneTask(userId);
     }
 
     @Override
     public Task save(Long userId,Task task) {
+        AppUser user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         new Task();
         Task newTask = Task.builder()
                 .description(task.getDescription())
                 .deadline(task.getDeadline())
                 .isDone(false)
+                .appUser(user)
                 .build();
-        AppUser user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         user.getTasks().add(newTask);
         taskRepo.save(newTask);
         userRepo.save(user);
