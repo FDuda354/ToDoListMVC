@@ -15,12 +15,13 @@ import java.util.List;
 @Table(name = "users")
 public class AppUser {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private String password;
     @OneToMany
     @JoinColumn(name = "user_id")
     private List<Task> tasks;
+
 
 }

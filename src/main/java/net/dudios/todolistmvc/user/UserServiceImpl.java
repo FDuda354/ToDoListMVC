@@ -1,12 +1,7 @@
 package net.dudios.todolistmvc.user;
 
 import lombok.AllArgsConstructor;
-import net.dudios.todolistmvc.task.Task;
-import net.dudios.todolistmvc.task.TaskRepo;
-import net.dudios.todolistmvc.task.TaskService;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -16,7 +11,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void saveUser(AppUser appUser) {
-        if(!userRepo.existsById(appUser.getId()))
+        if(!userRepo.existsByUsername(appUser.getUsername()))
             userRepo.save(appUser);
         else
             throw new IllegalStateException("User with id " + appUser.getId() + " already exists");

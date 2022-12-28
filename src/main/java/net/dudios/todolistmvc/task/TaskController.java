@@ -2,7 +2,6 @@ package net.dudios.todolistmvc.task;
 
 import net.dudios.todolistmvc.user.AppUser;
 import net.dudios.todolistmvc.user.UserRepo;
-import net.dudios.todolistmvc.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,23 +13,19 @@ import java.util.List;
 @RequestMapping("/tasks")
 public class TaskController {
 
-    //TODO: zastanowic sie czemu jest potrzeba na redirect a nie zwykłe wyrzucenie stringa
     private final TaskService taskService;
-    private final UserService userService;
     private final UserRepo userRepo;
     private Long userId;
-
     private String lastPage;
 
     @Autowired
-    public TaskController(TaskService taskService, UserService userService, UserRepo userRepo) {
+    public TaskController(TaskService taskService,  UserRepo userRepo) {
         this.taskService = taskService;
-        this.userService = userService;
         this.userRepo = userRepo;
     }
 
     @GetMapping
-    public String getAllTasks( Model model) {
+    public String getAllTasks(Model model) {
         List<Task> tasks = taskService.findAllTask(this.userId);
         model.addAttribute("allTasks", tasks);
         lastPage = "";
@@ -40,9 +35,6 @@ public class TaskController {
     public String login(@ModelAttribute AppUser user) {
         AppUser appUser = userRepo.findByUsername(user.getUsername());
         userId = appUser.getId();
-        //TODO: remove this
-        System.out.println(userId);
-
         return "redirect:/tasks";
     }
     @GetMapping("done")
@@ -63,7 +55,6 @@ public class TaskController {
     @PostMapping("newTask")
     public String addTask(@ModelAttribute Task task) {
         taskService.save(this.userId,task);
-
         return "redirect:/tasks";
     }
 
@@ -80,7 +71,6 @@ public class TaskController {
     @GetMapping("done/{taskId}")
     public String markAsDone(@PathVariable Long taskId) {
         taskService.markAsDone(taskId);
-        System.out.println(lastPage);
         return "redirect:/tasks/" + lastPage;
 
     }
