@@ -15,6 +15,7 @@ public class UserServiceImpl implements UserService {
         if (!userRepo.existsByUsername(appUser.getUsername()))
             userRepo.save(appUser);
         else
+            //TODO: handle exception
             throw new IllegalStateException("User with id " + appUser.getId() + " already exists");
     }
 
@@ -35,10 +36,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @LoginAspect
-    public AppUser login(AppUser user)   {
+    public AppUser login(AppUser user) {
         return userRepo.findByUsername(user.getUsername())
                 .orElse(null);
     }
-
 
 }

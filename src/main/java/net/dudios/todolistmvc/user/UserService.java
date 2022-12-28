@@ -11,6 +11,5 @@ public interface UserService {
 
     AppUser findByUsername(String username);
 
-    @LoginAspect
     AppUser login(AppUser user);
 }
