@@ -17,7 +17,7 @@ public class DbInit {
     private final TaskRepo taskRepo;
     private final UserRepo userRepo;
 
-   @EventListener(ApplicationReadyEvent.class)
+   //@EventListener(ApplicationReadyEvent.class)
     public void init() {
 
         new AppUser();
